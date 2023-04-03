@@ -57,6 +57,11 @@ function validarDatos(){
 	radio_genero.forEach(elemento => elemento.checked ? var_genero = elemento.value : null);
 	check_hobbies.forEach(elemento => elemento.checked ? arr_hobbies.push(elemento.value) : null);
 
+	if (estado_formulario == "Editar" && txt_correo.value == "") {
+		mostrarError();
+		return false;
+	}
+
 	if (arr_hobbies.length > 0 && var_nombres != "" && var_apellidos != "" && var_codigo != "" && var_correo != "" && var_fecha_nacimiento && var_genero != "" && arr_hobbies.length != 0) {
 		ocultarError();
 		return true;
@@ -197,7 +202,6 @@ function editar(e){
 }
 
 function guardar() {
-
 	var_correo = txt_correo.value;
 	for(i in estudiantes){
 		if (i == i_editando) {
@@ -225,6 +229,7 @@ btn_registrar.onclick = function(){
 			addEstudianteToArray();
 			estudiantesAarrayToTable();
 		}else if (estado_formulario == "Editar") {
+			guardar();
 			div_correo.classList.add("d-none");
 			estado_formulario = "Registrar";
 			btn_registrar.textContent = "Registrar";
