@@ -71,13 +71,13 @@ function generarCorreo(){
 	let arrayNombres = var_nombres.split(" ");
 	let arrayApellidos = var_apellidos.split(" ");
 	if(arrayNombres.length > 1){
-	    correo = arrayNombres[0][0] + arrayNombres[1][0];
+		correo = arrayNombres[0][0] + arrayNombres[1][0];
 	}else{
-	    correo = arrayNombres[0][0];
+		correo = arrayNombres[0][0];
 	}
 	correo += arrayApellidos[0];
 	for(let i = var_codigo.length-1; i > var_codigo.length-3; i--){
-    	correo += var_codigo[i];
+		correo += var_codigo[i];
 	}
 	correo += "@ucatolica.edu.co";
 	correo = correo.toLowerCase();
@@ -139,7 +139,7 @@ function estudiantesAarrayToTable(){
 
 function vaciarTabla(){
 	while(body_table_estudiantes.children.length != 0){
-	    body_table_estudiantes.removeChild(body_table_estudiantes.children[0]);
+		body_table_estudiantes.removeChild(body_table_estudiantes.children[0]);
 	}
 }
 
@@ -180,9 +180,9 @@ function editar(e){
 		div_correo.classList.remove("d-none");
 		txt_correo.value = estudiante_editando.correo;
 		for (i in select_programa.options){
-		    if (select_programa[i].text == estudiante_editando.programa) {
-		        select_programa.selectedIndex=i;
-		    }
+			if (select_programa[i].text == estudiante_editando.programa) {
+				select_programa.selectedIndex=i;
+			}
 		}	
 		radio_genero.forEach(elemento => elemento.value == estudiante_editando.genero ? elemento.checked = true : null);
 		for (i in estudiante_editando.hobbies){
@@ -195,46 +195,44 @@ function editar(e){
 }
 
 function guardar() {
-	if(validarDatos()){
-		var_correo = txt_correo.value;
-		for(i in estudiantes){
-			if (i == i_editando) {
-				estudiantes[i].nombres = var_nombres;
-				estudiantes[i].apellidos = var_apellidos;
-				estudiantes[i].codigo = var_codigo;
-				estudiantes[i].correo = var_correo;
-				estudiantes[i].fecha = var_fecha_nacimiento;
-				estudiantes[i].programa = var_programa;
-				estudiantes[i].genero = var_genero;
-				estudiantes[i].hobbies = arr_hobbies;
-				return true;
-			}
-		}
 
+	var_correo = txt_correo.value;
+	for(i in estudiantes){
+		if (i == i_editando) {
+			estudiantes[i].nombres = var_nombres;
+			estudiantes[i].apellidos = var_apellidos;
+			estudiantes[i].codigo = var_codigo;
+			estudiantes[i].correo = var_correo;
+			estudiantes[i].fecha = var_fecha_nacimiento;
+			estudiantes[i].programa = var_programa;
+			estudiantes[i].genero = var_genero;
+			estudiantes[i].hobbies = arr_hobbies;
+			
+		}
 	}
-	return false;
+
+	
 	
 
 }
 
 
 btn_registrar.onclick = function(){
-	if (estado_formulario == "Registrar") {
-		addEstudianteToArray();
-		estudiantesAarrayToTable();
-	}else if (estado_formulario == "Editar") {
-		if(guardar()){
-		div_correo.classList.add("d-none");
-		estado_formulario = "Registrar";
-		btn_registrar.textContent = "Registrar";
-		estudiantesAarrayToTable();
-		}		
+	if (validarDatos()){
+		if (estado_formulario == "Registrar") {
+			addEstudianteToArray();
+			estudiantesAarrayToTable();
+		}else if (estado_formulario == "Editar") {
+			div_correo.classList.add("d-none");
+			estado_formulario = "Registrar";
+			btn_registrar.textContent = "Registrar";
+			estudiantesAarrayToTable();
+			
+		}
 	}
+
 	
 };
-
-	
-
 
 const toastLiveExample = document.getElementById('liveToast');
 
