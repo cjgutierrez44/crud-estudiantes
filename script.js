@@ -62,7 +62,7 @@ function validarDatos(){
 		return false;
 	}
 
-	if (arr_hobbies.length > 0 && var_nombres != "" && var_apellidos != "" && var_codigo != "" && var_correo != "" && var_fecha_nacimiento && var_genero != "" && arr_hobbies.length != 0) {
+	if (arr_hobbies.length > 0 && var_nombres != "" && var_apellidos != "" && var_codigo != "" && var_correo != "" && var_fecha_nacimiento && var_genero != undefined && arr_hobbies.length != 0) {
 		ocultarError();
 		return true;
 	}else{
@@ -216,9 +216,6 @@ function guardar() {
 			
 		}
 	}
-
-	
-	
 
 }
 
