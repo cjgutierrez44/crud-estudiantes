@@ -13,6 +13,7 @@ const body_table_estudiantes = document.getElementById("tabla-estudiantes-body")
 
 const div_correo = document.getElementById("div-email");
 
+const alert = document.getElementById("myAlert");
 
 let estudiantes = new Array();
 
@@ -42,6 +43,7 @@ let arr_hobbies = [];
 let estado_formulario = "Registrar"; 
 let i_editando;
 let estudiante_editando;
+
 
 
 function validarDatos(){
@@ -234,11 +236,10 @@ btn_registrar.onclick = function(){
 	
 };
 
-const toastLiveExample = document.getElementById('liveToast');
-
 function mostrarError(){
-	toastLiveExample.classList.add("show");
+	alert.classList.remove("d-none");
+
 }
 function ocultarError(){
-	toastLiveExample.classList.remove("show");
+	alert.classList.add("d-none");
 }
