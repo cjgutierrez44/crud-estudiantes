@@ -15,7 +15,7 @@ const div_correo = document.getElementById("div-email");
 
 const alert = document.getElementById("myAlert");
 
-let estudiantes = new Array();
+
 
 
 class Estudiante{
@@ -29,6 +29,33 @@ class Estudiante{
 		this.genero = genero;
 		this.hobbies = hobbies;
 	}
+}
+
+
+const EstudianteDAO = {
+	"estudiantes": [],
+	"create": function(estudiante){
+		this.estudiantes.push(estudiante);
+	},
+	"read":function(){
+		return this.estudiantes;
+	},
+	"update": function(estudiante){
+		for (var i = 0; i < this.estudiantes.length; i++) {
+			console.log(this.estudiantes[i].codigo);
+			console.log(estudiante.codigo);
+			if (this.estudiantes[i].codigo == estudiante.codigo) {
+				this.estudiantes[i] = estudiante;
+				console.log(this.estudiantes[i].nombre);
+			}
+		}
+	},
+	"delete":function(codigo){
+		let estudiante = getEstudianteByCodigo(codigo);
+		this.estudiantes = this.estudiantes.filter(est => est.codigo != estudiante[1].codigo);
+	}
+
+
 }
 
 let var_nombres;
@@ -105,7 +132,7 @@ function varciarCampos(){
 function addEstudianteToArray(){
 	if(validarDatos()){
 		let estudiante = new Estudiante(var_nombres, var_apellidos, var_codigo, var_correo,var_fecha_nacimiento, var_programa, var_genero, arr_hobbies);
-		estudiantes.push(estudiante);
+		EstudianteDAO.create(estudiante);
 	}
 
 }
@@ -113,31 +140,31 @@ function addEstudianteToArray(){
 function estudiantesAarrayToTable(){
 	vaciarTabla();
 	varciarCampos();
-	for (var i = 0; i < estudiantes.length; i++) {
+	for (var i = 0; i < EstudianteDAO.read().length; i++) {
 		let row = "<tr><td>" + 
-		estudiantes[i].nombres + 
+		EstudianteDAO.read()[i].nombres + 
 		"</td><td>" + 
-		estudiantes[i].apellidos + 
+		EstudianteDAO.read()[i].apellidos + 
 		"</td><td>" + 
-		estudiantes[i].codigo + 
+		EstudianteDAO.read()[i].codigo + 
 		"</td><td>" + 
-		estudiantes[i].correo + 
+		EstudianteDAO.read()[i].correo + 
 		"</td><td>" +
-		estudiantes[i].fecha + 
+		EstudianteDAO.read()[i].fecha + 
 		"</td><td>" + 
-		estudiantes[i].programa + 
+		EstudianteDAO.read()[i].programa + 
 		"</td><td>" +
-		estudiantes[i].genero + 
+		EstudianteDAO.read()[i].genero + 
 		"</td><td>" + 
-		estudiantes[i].hobbies + 
-		"</td><td class='d-flex'><button id='editar-" + estudiantes[i].codigo  + "' class='mx-2 my-2 text-warning btn btn-outline-primary editar'><i class='bi bi-pencil-fill'></i></button><button id='eliminar-" + estudiantes[i].codigo  + "' class='mx-2 my-2 text-danger btn btn-outline-primary borrar'><i class='bi bi-trash-fill'></i></button></td></tr>";
+		EstudianteDAO.read()[i].hobbies + 
+		"</td><td class='d-flex'><button id='editar-" + EstudianteDAO.read()[i].codigo  + "' class='mx-2 my-2 text-warning btn btn-outline-primary editar'><i class='bi bi-pencil-fill'></i></button><button id='eliminar-" + EstudianteDAO.read()[i].codigo  + "' class='mx-2 my-2 text-danger btn btn-outline-primary borrar'><i class='bi bi-trash-fill'></i></button></td></tr>";
 		body_table_estudiantes.insertRow(-1).innerHTML = row;
 
 
-		let boton_eliminar = document.getElementById("eliminar-" + estudiantes[i].codigo);
+		let boton_eliminar = document.getElementById("eliminar-" + EstudianteDAO.read()[i].codigo);
 		boton_eliminar.addEventListener("click", eliminar);
 
-		let boton_editar = document.getElementById("editar-" + estudiantes[i].codigo);
+		let boton_editar = document.getElementById("editar-" + EstudianteDAO.read()[i].codigo);
 		boton_editar.addEventListener("click", editar);
 
 	}
@@ -155,9 +182,9 @@ function getCodigoFromRow(e) {
 }
 
 function getEstudianteByCodigo(codigo){
-	for(i in estudiantes){
-		if (estudiantes[i].codigo == codigo) {
-			return [i, estudiantes[i]];
+	for(i in EstudianteDAO.read()){
+		if (EstudianteDAO.read()[i].codigo == codigo) {
+			return [i, EstudianteDAO.read()[i]];
 		}
 	}
 	return null;
@@ -168,7 +195,7 @@ function eliminar(e){
 	let codigo = getCodigoFromRow(e);
 	let estudiante = getEstudianteByCodigo(codigo);
 	if (estudiante != null) {
-		estudiantes = estudiantes.filter(est => est.codigo != estudiante[1].codigo);
+		EstudianteDAO.delete(codigo);
 	}
 	estudiantesAarrayToTable();
 } 
@@ -203,18 +230,9 @@ function editar(e){
 
 function guardar() {
 	var_correo = txt_correo.value;
-	for(i in estudiantes){
-		if (i == i_editando) {
-			estudiantes[i].nombres = var_nombres;
-			estudiantes[i].apellidos = var_apellidos;
-			estudiantes[i].codigo = var_codigo;
-			estudiantes[i].correo = var_correo;
-			estudiantes[i].fecha = var_fecha_nacimiento;
-			estudiantes[i].programa = var_programa;
-			estudiantes[i].genero = var_genero;
-			estudiantes[i].hobbies = arr_hobbies;
-			
-		}
+	if(validarDatos()){
+		let estudiante = new Estudiante(var_nombres, var_apellidos, var_codigo, var_correo,var_fecha_nacimiento, var_programa, var_genero, arr_hobbies);
+		EstudianteDAO.update(estudiante);
 	}
 
 }
