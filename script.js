@@ -18,45 +18,11 @@ const alert = document.getElementById("myAlert");
 
 
 
-class Estudiante{
-	constructor(nombres, apellidos, codigo, correo, fecha, programa, genero, hobbies){
-		this.nombres = nombres;
-		this.apellidos = apellidos;
-		this.codigo = codigo;
-		this.correo = correo;
-		this.fecha = fecha;
-		this.programa = programa;
-		this.genero = genero;
-		this.hobbies = hobbies;
-	}
-}
+import Estudiante from "./Estudiante.js"
+import EstudianteDAO from "./EstudianteDAO.js"
 
 
-const EstudianteDAO = {
-	"estudiantes": [],
-	"create": function(estudiante){
-		this.estudiantes.push(estudiante);
-	},
-	"read":function(){
-		return this.estudiantes;
-	},
-	"update": function(estudiante){
-		for (var i = 0; i < this.estudiantes.length; i++) {
-			console.log(this.estudiantes[i].codigo);
-			console.log(estudiante.codigo);
-			if (this.estudiantes[i].codigo == estudiante.codigo) {
-				this.estudiantes[i] = estudiante;
-				console.log(this.estudiantes[i].nombre);
-			}
-		}
-	},
-	"delete":function(codigo){
-		let estudiante = getEstudianteByCodigo(codigo);
-		this.estudiantes = this.estudiantes.filter(est => est.codigo != estudiante[1].codigo);
-	}
-
-
-}
+const estudianteDAO = new EstudianteDAO();
 
 let var_nombres;
 let var_apellidos;
@@ -67,11 +33,7 @@ let var_programa;
 let var_genero;
 let arr_hobbies = [];
 
-let estado_formulario = "Registrar"; 
-let i_editando;
-let estudiante_editando;
-
-
+let estado_formulario = "Registrar";
 
 function validarDatos(){
 	arr_hobbies = [];
@@ -88,7 +50,6 @@ function validarDatos(){
 		mostrarError();
 		return false;
 	}
-
 	if (arr_hobbies.length > 0 && var_nombres != "" && var_apellidos != "" && var_codigo != "" && var_correo != "" && var_fecha_nacimiento && var_programa != "Seleccione" && var_genero != undefined && arr_hobbies.length != 0) {
 		ocultarError();
 		return true;
@@ -130,41 +91,36 @@ function varciarCampos(){
 }
 
 function addEstudianteToArray(){
-	if(validarDatos()){
-		let estudiante = new Estudiante(var_nombres, var_apellidos, var_codigo, var_correo,var_fecha_nacimiento, var_programa, var_genero, arr_hobbies);
-		EstudianteDAO.create(estudiante);
-	}
-
+	let estudiante = new Estudiante(var_nombres, var_apellidos, var_codigo, var_correo,var_fecha_nacimiento, var_programa, var_genero, arr_hobbies);
+	estudianteDAO.create(estudiante);
 }
 
 function estudiantesAarrayToTable(){
-	vaciarTabla();
-	varciarCampos();
-	for (var i = 0; i < EstudianteDAO.read().length; i++) {
+	for (let i = 0; i < estudianteDAO.read().length; i++) {
 		let row = "<tr><td>" + 
-		EstudianteDAO.read()[i].nombres + 
+		estudianteDAO.read()[i].nombres + 
 		"</td><td>" + 
-		EstudianteDAO.read()[i].apellidos + 
+		estudianteDAO.read()[i].apellidos + 
 		"</td><td>" + 
-		EstudianteDAO.read()[i].codigo + 
+		estudianteDAO.read()[i].codigo + 
 		"</td><td>" + 
-		EstudianteDAO.read()[i].correo + 
+		estudianteDAO.read()[i].correo + 
 		"</td><td>" +
-		EstudianteDAO.read()[i].fecha + 
+		estudianteDAO.read()[i].fecha + 
 		"</td><td>" + 
-		EstudianteDAO.read()[i].programa + 
+		estudianteDAO.read()[i].programa + 
 		"</td><td>" +
-		EstudianteDAO.read()[i].genero + 
+		estudianteDAO.read()[i].genero + 
 		"</td><td>" + 
-		EstudianteDAO.read()[i].hobbies + 
-		"</td><td class='d-flex'><button id='editar-" + EstudianteDAO.read()[i].codigo  + "' class='mx-2 my-2 text-warning btn btn-outline-primary editar'><i class='bi bi-pencil-fill'></i></button><button id='eliminar-" + EstudianteDAO.read()[i].codigo  + "' class='mx-2 my-2 text-danger btn btn-outline-primary borrar'><i class='bi bi-trash-fill'></i></button></td></tr>";
+		estudianteDAO.read()[i].hobbies + 
+		"</td><td class='d-flex'><button id='editar-" + estudianteDAO.read()[i].codigo  + "' class='mx-2 my-2 text-warning btn btn-outline-primary editar'><i class='bi bi-pencil-fill'></i></button><button id='eliminar-" + estudianteDAO.read()[i].codigo  + "' class='mx-2 my-2 text-danger btn btn-outline-primary borrar'><i class='bi bi-trash-fill'></i></button></td></tr>";
 		body_table_estudiantes.insertRow(-1).innerHTML = row;
 
 
-		let boton_eliminar = document.getElementById("eliminar-" + EstudianteDAO.read()[i].codigo);
+		let boton_eliminar = document.getElementById("eliminar-" + estudianteDAO.read()[i].codigo);
 		boton_eliminar.addEventListener("click", eliminar);
 
-		let boton_editar = document.getElementById("editar-" + EstudianteDAO.read()[i].codigo);
+		let boton_editar = document.getElementById("editar-" + estudianteDAO.read()[i].codigo);
 		boton_editar.addEventListener("click", editar);
 
 	}
@@ -178,49 +134,43 @@ function vaciarTabla(){
 }
 
 function getCodigoFromRow(e) {
-	return e.srcElement.parentElement.parentElement.children[2].textContent;
-}
-
-function getEstudianteByCodigo(codigo){
-	for(i in EstudianteDAO.read()){
-		if (EstudianteDAO.read()[i].codigo == codigo) {
-			return [i, EstudianteDAO.read()[i]];
-		}
-	}
-	return null;
+	let text = e.srcElement.parentElement.parentElement.children[2];
+	console.log(text);
+	console.log(text.textContent);
+	return text.textContent;
 }
 
 function eliminar(e){
 	ocultarError();
 	let codigo = getCodigoFromRow(e);
-	let estudiante = getEstudianteByCodigo(codigo);
+	let estudiante = estudianteDAO.get(codigo);
 	if (estudiante != null) {
-		EstudianteDAO.delete(codigo);
+		estudianteDAO.delete(codigo);
 	}
+	vaciarTabla();
 	estudiantesAarrayToTable();
 } 
 
 function editar(e){
 	ocultarError();
 	let codigo = getCodigoFromRow(e);
-	let estudiante = getEstudianteByCodigo(codigo);
-	i_editando = estudiante[0];
-	estudiante_editando = estudiante[1];
+	let estudiante =  estudianteDAO.get(codigo);
 	if (estudiante =! null) {
-		txt_nombres.value = estudiante_editando.nombres;
-		txt_apellidos.value = estudiante_editando.apellidos;
-		txt_codigo.value = estudiante_editando.codigo;
-		txt_fecha_nacimiento.value = estudiante_editando.fecha;
+		estudiante = estudianteDAO.get(codigo);
+		txt_nombres.value =  estudiante.nombres;
+		txt_apellidos.value = estudiante.apellidos;
+		txt_codigo.value = estudiante.codigo;
+		txt_fecha_nacimiento.value = estudiante.fecha;
 		div_correo.classList.remove("d-none");
-		txt_correo.value = estudiante_editando.correo;
-		for (i in select_programa.options){
-			if (select_programa[i].text == estudiante_editando.programa) {
+		txt_correo.value = estudiante.correo;
+		for (let i in select_programa.options){
+			if (select_programa[i].text == estudiante.programa) {
 				select_programa.selectedIndex=i;
 			}
 		}	
-		radio_genero.forEach(elemento => elemento.value == estudiante_editando.genero ? elemento.checked = true : null);
-		for (i in estudiante_editando.hobbies){
-			check_hobbies.forEach(elemento => elemento.value == estudiante_editando.hobbies[i] ? elemento.checked = true : null);
+		radio_genero.forEach(elemento => elemento.value == estudiante.genero ? elemento.checked = true : null);
+		for (let i in estudiante.hobbies){
+			check_hobbies.forEach(elemento => elemento.value == estudiante.hobbies[i] ? elemento.checked = true : null);
 		}
 		estado_formulario = "Editar";
 		btn_registrar.textContent = "Guardar";
@@ -230,10 +180,9 @@ function editar(e){
 
 function guardar() {
 	var_correo = txt_correo.value;
-	if(validarDatos()){
-		let estudiante = new Estudiante(var_nombres, var_apellidos, var_codigo, var_correo,var_fecha_nacimiento, var_programa, var_genero, arr_hobbies);
-		EstudianteDAO.update(estudiante);
-	}
+	let estudiante = new Estudiante(var_nombres, var_apellidos, var_codigo, var_correo,var_fecha_nacimiento, var_programa, var_genero, arr_hobbies);
+	estudianteDAO.update(estudiante);
+	
 
 }
 
@@ -242,13 +191,18 @@ btn_registrar.onclick = function(){
 	if (validarDatos()){
 		if (estado_formulario == "Registrar") {
 			addEstudianteToArray();
+			vaciarTabla();
 			estudiantesAarrayToTable();
+			varciarCampos();
 		}else if (estado_formulario == "Editar") {
 			guardar();
+			vaciarTabla();
+			estudiantesAarrayToTable();
+			varciarCampos();
 			div_correo.classList.add("d-none");
 			estado_formulario = "Registrar";
 			btn_registrar.textContent = "Registrar";
-			estudiantesAarrayToTable();
+
 			
 		}
 	}
