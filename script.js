@@ -162,6 +162,7 @@ function editar(e){
 		txt_codigo.value = estudiante.codigo;
 		txt_fecha_nacimiento.value = estudiante.fecha;
 		div_correo.classList.remove("d-none");
+		txt_codigo.disabled = true;
 		txt_correo.value = estudiante.correo;
 		for (let i in select_programa.options){
 			if (select_programa[i].text == estudiante.programa) {
@@ -199,7 +200,9 @@ btn_registrar.onclick = function(){
 			vaciarTabla();
 			estudiantesAarrayToTable();
 			varciarCampos();
+			txt_codigo.ena
 			div_correo.classList.add("d-none");
+			txt_codigo.disabled = false;
 			estado_formulario = "Registrar";
 			btn_registrar.textContent = "Registrar";
 
